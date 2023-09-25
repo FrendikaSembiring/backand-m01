@@ -1,16 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:my_project/stream.dart';
 
-import 'package:m01/stream.dart';
-
-void main() {
+void main() async {
   runApp(const MyApp());
-  // await getUserData();
-  // print('Getting User data...');
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -19,155 +12,103 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        useMaterial3: true
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+
       ),
-      // home: const MyHomePage(title: 'Flutter Stream and Future Demo'),
-      home: const StreamWidget(),
+      home: HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  // List<String> data = [];
-  List<Map> detailData = [];
-
-  Future<void> getUserData() async {
-    // data = ['Bunny', 'Funny', 'Miles'];
-    detailData = [
-      {
-        'Nama'          : 'Bunny',
-        'Tempat Lahir'  : 'Medan',
-        'Nomor Telepon' : '081120774990'
-      },
-      {
-        'Nama'          : 'Funny',
-        'Tempat Lahir'  : 'Jakarta',
-        'Nomor Telepon' : '081350541218'
-      },
-      {
-        'Nama'          : 'Miles',
-        'Tempat Lahir'  : 'Boston',
-        'Nomor Telepon' : '082146376061'
-      }
-    ];
-    await Future.delayed(const Duration(seconds: 3), (){
-      print("Downloaded ${detailData.length} data");
+class _HomePageState extends State<HomePage> {
+List<String> _data = [];
+String desc = "";
+Future<List<String>> getUserData() async {
+  _data = ["Bunny", "Funny", "Miles"];
+  await Future.delayed(const Duration(seconds: 3), () {
+    print("Downloaded ${_data.length} data");
+  });
+  return _data;
+}
+List<Map> _userData = [];
+Future<List<Map>> getUserInfo() async {
+    _userData = [{"name" : "Frendika", "contact" : "3432"},
+                 {"name" : "Ireng Man", "contact" : "3434"},
+                 {"name" : "Ireng Put", "contact" : "34332"}];
+    await Future.delayed(const Duration(seconds: 4), () {
+        desc = "Downloaded ${_userData.length} data from userData..";
+    });
+    return _userData;
+}
+  void getData() async {
+    var result = await getUserData();
+    setState(() {
+      _data = result;
     });
   }
-
-  // int _counter = 0;
-
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // This call to setState tells the Flutter framework that something has
-  //     // changed in this State, which causes it to rerun the build method below
-  //     // so that the display can reflect the updated values. If we changed
-  //     // _counter without calling setState(), then the build method would not be
-  //     // called again, and so nothing would appear to happen.
-  //     _counter++;
-  //   });
-  // }
-
+  void getUserInfoData() async {
+    var res = await getUserInfo();
+    setState(() {
+         desc = "Downloaded ${_userData.length} data from userData..";
+      _userData = res;
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text("Flutter Demo Home Page"),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-           const Text('Daftar Pengguna', style: TextStyle(fontSize: 20),),
-          //  Text('$data', style: Theme.of(context).textTheme.headlineMedium,),
-            detailData.isEmpty
-          ? Container()
-          : SizedBox(
-              height: MediaQuery.of(context).size.height / 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.builder(
-                  itemCount: detailData.length,
-                  itemBuilder: (context, index){
-                    return ListTile(
-                      title: Text(detailData[index]['Nama']),
-                      subtitle: Text('${detailData[index]['Nomor Telepon']}  |  ${detailData[index]['Tempat Lahir']}'),
-                    );
-                  }
-                ),
-              ),
-            ),
+          children: [
             ElevatedButton(
-              onPressed: (){
-                setState(() {
-                  getUserData();
-                });
-                print('Getting User data...');
-              }, 
-              child: const Text('Get User')
-            )
+                onPressed: () {
+                  getData();
+                },
+                child: Text('Set User')),
+                ElevatedButton(onPressed: () {
+                      getUserInfoData();
+                    print(desc);
+                }, child: Text("Latihan")),
+                _userData.isEmpty? 
+                Text(desc) : Container(),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const contoh2()));
+                },
+                child: Text("Stream")),
+                Text("Daftar Pengguna"),
+            Text(
+              '$_data',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+                _userData.isEmpty? Container() :
+            Expanded(
+              child: ListView.builder(
+                      itemCount: _userData.length,
+                      itemBuilder: (context, index) {
+                          return Container(
+                            child: Text("${_userData[index]["name"]} ${_userData[index]["contact"]}"),
+                          );
+                      }),
+            ),
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
